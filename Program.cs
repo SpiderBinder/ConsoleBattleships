@@ -62,6 +62,7 @@
                     Game game = new Game();
                     Console.WriteLine("\x1b[2J\x1b[H\x1b[?25l" +
                         (game.GameLoop() ? "Win!!!" : "Lose :("));
+                    Thread.Sleep(2000);
                     break;
                 case 1:
                     Console.Clear();

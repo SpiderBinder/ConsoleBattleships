@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -181,14 +182,13 @@ namespace ConsoleBattleships
 
         private bool PlayerTurn()
         {
-            // TODO: Just display board as empty besides if a place has a ship or not on the opponent's board where hits have already occurred
             char[,] board = new char[_boardSize, _boardSize];
             for (int i = 0; i < _boardSize; i++)
             {
                 for (int j = 0; j < _boardSize; j++)
                 {
                     // Checks for an existing hit or miss to display from the enemy board
-                    if (_playerHits.Contains($"{i}{j}")) { board[i, j] = _enemyBoard[i, j] ? 'x' : 'o'; }
+                    if (_playerHits.Contains($"{i}{j}")) { board[i, j] = _enemyBoard[i, j] ? '*' : 'o'; }
                     else { board[i, j] = '.'; }
                 }
             }
@@ -204,7 +204,7 @@ namespace ConsoleBattleships
                     
                     _playerHits.Add($"{_selected[0]}{_selected[1]}");
                     Console.WriteLine(_enemyBoard[_selected[0], _selected[1]] ? "Hit!!" : "Miss");
-                    Thread.Sleep(1500);
+                    Thread.Sleep(1000);
                     return CheckWin(_enemyBoard, _playerHits);
                 }
                 if (input == Inputs.Chat && Multiplayer)
@@ -214,18 +214,39 @@ namespace ConsoleBattleships
             }
         }
 
+        // TODO: Merge 'ComTurn' and 'EnemyTurn' as the latter half can be reused for both
         private bool ComTurn()
         {
             // TODO: Maybe make it target adjacent to succesful hits?
             Random random = new Random();
+            int x;
+            int y;
             while (true)
             {
-                int x = random.Next(0, _boardSize);
-                int y = random.Next(0, _boardSize);
+                x = random.Next(0, _boardSize);
+                y = random.Next(0, _boardSize);
                 if (_enemyHits.Contains($"{x}{y}")) { continue; }
                 _enemyHits.Add($"{x}{y}");
                 break;
             }
+
+            char[,] board = new char[_boardSize, _boardSize];
+            for (int i = 0; i < _boardSize; i++)
+            {
+                for (int j = 0; j < _boardSize; j++)
+                {
+                    // Checks for hits or misses the COM player has made
+                    if (x == i && y == j) { board[i, j] = '+'; }
+                    else if (_enemyHits.Contains($"{i}{j}")) { board[i, j] = _playerBoard[i, j] ? '*' : 'o'; }
+                    else { board[i, j] = _playerBoard[i, j] ? 'x' : '.'; }
+                }
+            }
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Draw(board, false);
+            Console.ResetColor();
+            Thread.Sleep(2000);
+
             return CheckWin(_playerBoard, _enemyHits);
         }
 
@@ -284,7 +305,7 @@ namespace ConsoleBattleships
             return Inputs.None;
         }
 
-        private void Draw(char[,] board)
+        private void Draw(char[,] board, bool selectShow = true)
         {
             // Clears screen, resets cursor position, hides cursor
             string output = "\x1b[2J\x1b[H\x1b[?25l";
@@ -295,7 +316,7 @@ namespace ConsoleBattleships
                 output += "║";
                 for (int j = 0; j < _boardSize; j++)
                 {
-                    if (_selected[0] == i && _selected[1] == j) { output += $"\x1b[4m{board[i, j]}\x1b[0m"; }
+                    if (_selected[0] == i && _selected[1] == j && selectShow) { output += $"\x1b[4m{board[i, j]}\x1b[0m"; }
                     else { output += board[i, j]; }
                 }
                 output += "║\n";
@@ -303,6 +324,14 @@ namespace ConsoleBattleships
             output += "╚" + new string('═', _boardSize) + "╝";
 
             Console.WriteLine(output);
+            Console.Write(
+                "\x1b[0;14HKey:" +
+                "\x1b[1;14H" + ". - Empty" +
+                "\x1b[2;14H" + "x - Your Ship" +
+                "\x1b[3;14H" + "* - Hit" +
+                "\x1b[4;14H" + "o - Miss" +
+                "\x1b[5;14H" + "+ - Last Enemy Selection" +
+                "\x1b[13;0H");
         }
     }
 }
