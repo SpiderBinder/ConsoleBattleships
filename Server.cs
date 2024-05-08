@@ -31,7 +31,8 @@ namespace Battleships
                 Console.WriteLine("Client 1 connected.\nWaiting for client 2...");
                 this.client2 = server.AcceptTcpClient();
                 this.ns2 = client2.GetStream();
-                Console.WriteLine("Client 2 connected.\nStarting");
+                Console.WriteLine("Client 2 connected.");
+                Broadcast("Clients connected. Starting.");
                 
 
                 while (client1.Connected && client2.Connected) // While both clients are connected, do game loop
@@ -43,6 +44,17 @@ namespace Battleships
         }
 
 
+        private void Broadcast(string message){
+            try{
+                Console.WriteLine($"Sending: \"{message}\"");
+                byte[] bytemessage = new byte[1024];
+                bytemessage = Encoding.Default.GetBytes(message);
+                ns1.Write(bytemessage, 0, bytemessage.Length);
+                ns2.Write(bytemessage, 0, bytemessage.Length);
+            }catch (Exception e){
+                Console.WriteLine($"Error Broadcasting: \"{message}\"\n  :{e}");
+            }
+        }
 
     }
 }
