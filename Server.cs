@@ -15,7 +15,7 @@ namespace Battleships
 
 
         public Server(){
-            this.server = new TcpListener(IPAddress.Loopback, 9999);  
+            this.server = new TcpListener(IPAddress.Loopback, port);  
 
             this.server.Start();  // this will start the server
 
