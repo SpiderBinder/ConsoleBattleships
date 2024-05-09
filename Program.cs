@@ -8,7 +8,8 @@
             string[] options = new string[]
             {
                 "Singleplayer",
-                "Multiplayer",
+                "Multiplayer (Connect)",
+                "Host server",
                 "Options",
                 "Exit Game"
             };
@@ -67,16 +68,21 @@
                 case 1:
                     Console.Clear();
                     Console.WriteLine("Multiplayer isn't implemented yet sorry!");
-                    Thread.Sleep(1500);
+                    // ConsoleBattleships.Client client = new Client();
                     Console.Clear();
                     break;
                 case 2:
+                    Console.Clear();
+                    Console.WriteLine("Hosting server...");
+                    ConsoleBattleships.Server server = new Server();
+                    break;
+                case 3:
                     Console.Clear();
                     Console.WriteLine("Options aren't implemented yet sorry!");
                     Thread.Sleep(1500);
                     Console.Clear();
                     break;
-                case 3:
+                case 4:
                     exit = true;
                     break;
 
