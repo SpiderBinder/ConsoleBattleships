@@ -12,8 +12,6 @@ namespace Battleships
         private TcpClient client0, client1;
         private NetworkStream ns0, ns1;
 
-
-
         public Server(int port = 21002){
             this.server = new TcpListener(IPAddress.Loopback, port);  
 
