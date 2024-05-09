@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets; 
 
 
-namespace Battleships
+namespace ConsoleBattleships
 {
     class Server 
     {
