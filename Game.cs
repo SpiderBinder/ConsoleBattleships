@@ -333,5 +333,64 @@ namespace ConsoleBattleships
                 "\x1b[5;14H" + "+ - Last Enemy Selection" +
                 "\x1b[13;0H");
         }
+        
+        private void DrawMultiplayer(char[,] playerBoard, char[,] enemyBoard, string message = "", bool selectShow = true)
+        {
+            int boardOffset = 50; //How many spaces away the second board is.
+            string offset = new string(' ', boardOffset);
+            // Clears screen, resets cursor position, hides cursor
+            string output = "\x1b[2J\x1b[H\x1b[?25l";
+
+            if (message.Length > (14 + boardOffset)) message = message.Substring(0, 11 + boardOffset) + "..."; // Truncate string if too long
+            
+            string messageString = ""; // String to add between two boards with message
+            messageString += new string(' ', 13 + (boardOffset / 2) - (int)Math.Floor((float)message.Length / 2)) + message; // Line with message with appropriate spacing.
+            messageString += new string(' ', 13 + (boardOffset / 2) - (int)Math.Ceiling((float)message.Length / 2));
+
+            output += "╔" + new string('═', _boardSize) + "╗" + "                            " + offset + "╔" + new string('═', _boardSize) + "╗\n";
+            for (int i = 0; i < _boardSize; i++)
+            {
+                output += "║";
+                for (int j = 0; j < _boardSize; j++)
+                {
+                    if (_selected[0] == i && _selected[1] == j && selectShow) { output += $"\x1b[4m{playerBoard[i, j]}\x1b[0m"; }
+                    else { output += playerBoard[i, j]; }
+                }
+                output += "║  ";
+                switch (i){
+                    case 0:
+                        output += " . - Empty                " + offset;
+                        break;
+                    case 1:
+                        output += " x - Your Ship            " + offset;
+                        break;
+                    case 2:
+                        output += " * - Hit                  " + offset;
+                        break;
+                    case 3:
+                        output += " o - Miss                 " + offset;
+                        break;
+                    case 4:
+                        output += " + - Last Enemy Selection " + offset;
+                        break;
+                    case 6:
+                        output += messageString;
+                        break;
+                    default:
+                        output += "                          " + offset;
+                        break;
+                }
+                output += "║";
+                for (int j = 0; j < _boardSize; j++)
+                {
+                    if (_selected[0] == i && _selected[1] == j && selectShow) { output += $"\x1b[4m{enemyBoard[i, j]}\x1b[0m"; }
+                    else { output += enemyBoard[i, j]; }
+                }
+                output += "║\n";
+            }
+            output += "╚" + new string('═', _boardSize) + "╝" + "                            " + offset + "╚" + new string('═', _boardSize) + "╝";
+
+            Console.WriteLine(output);
+        }
     }
 }
