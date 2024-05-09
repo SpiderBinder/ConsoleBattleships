@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
 using System.Net;
 using System.Net.Sockets; 
 
 
-namespace Battleships
+namespace ConsoleBattleships
 {
     class Server 
     {
@@ -16,10 +12,8 @@ namespace Battleships
         private TcpClient client0, client1;
         private NetworkStream ns0, ns1;
 
-
-
-        public Server(){
-            this.server = new TcpListener(IPAddress.Loopback, 9999);  
+        public Server(int port = 21002){
+            this.server = new TcpListener(IPAddress.Loopback, port);  
 
             this.server.Start();  // this will start the server
 
